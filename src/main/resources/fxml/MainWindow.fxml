@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" stylesheets="@../styles/mainwindow.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+      <JFXTextField fx:id="ChoosedFile" editable="false" layoutX="14.0" layoutY="35.0" prefHeight="15.0" prefWidth="315.0" />
+      <JFXButton fx:id="ChooseBtn" layoutX="342.0" layoutY="42.0" onAction="#ChooseFile" text="Choose" />
+      <Pane layoutX="555.0" layoutY="14.0" prefHeight="79.0" prefWidth="200.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+         <children>
+            <Label layoutX="19.0" layoutY="14.0" text="ID:" textFill="WHITE" />
+            <Label layoutX="18.0" layoutY="42.0" text="Email:" textFill="WHITE" />
+            <Label fx:id="IDTxt" layoutX="65.0" layoutY="14.0" textFill="WHITE" />
+            <Label fx:id="EmailTxt" layoutX="65.0" layoutY="42.0" textFill="WHITE" />
+         </children>
+      </Pane>
+      <JFXListView fx:id="ListFiles" layoutX="554.0" layoutY="107.0" prefHeight="244.0" prefWidth="200.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm;" />
+      <JFXButton fx:id="ListFilesBtn" layoutX="677.0" layoutY="361.0" onAction="#ChooseDirectory" text="List Files" />
+      <JFXButton fx:id="ClearBtn" layoutX="606.0" layoutY="361.0" onAction="#ClearList" text="Clear" />
+      <JFXButton fx:id="UploadBtn" layoutX="34.0" layoutY="107.0" onAction="#UploadFile" text="Upload" />
+   </children>
+</AnchorPane>
