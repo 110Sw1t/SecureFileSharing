@@ -58,7 +58,6 @@ public class Main extends Application {
 //    }
     @Override
     public void start(Stage primaryStage) throws Exception {
-        System.out.println("kero");
         DriveHandle handle = DriveHandle.getDriveHandle();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
