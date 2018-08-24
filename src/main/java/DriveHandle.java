@@ -18,17 +18,16 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.User;
 import java.io.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,25 +37,26 @@ import java.util.logging.Logger;
  * @author fadia
  */
 public class DriveHandle {
-    
-   
+
     private static final String SHAREDFOLDERID = "1WYePJKM-Ery3ecvdXsdzc-WRRHhuxN6w";
     private static final String APPLICATION_NAME = "Secure File Sharing";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    public static final String USERNAME = "uname";
+    public static final String USEREMAIL = "email";
 
     /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved credentials/ folder.
+     * Global instance of the scopes required by this quickstart. If modifying
+     * these scopes, delete your previously saved credentials/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
     private static final String CREDENTIALS_FILE_PATH = "credentials.json";
-    
+
     private static DriveHandle self = null;
-    
+
     private Drive service;
-    
-    private DriveHandle(){
+
+    private DriveHandle() {
         try {
             NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             this.service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -64,16 +64,16 @@ public class DriveHandle {
                     .build();
         } catch (Exception ex) {
             System.err.println("Something went wrong, when creating DriveHandle object.\n\n");
-        } 
+        }
     }
-    
-    public static DriveHandle getDriveHandle(){
-        if(self == null){
+
+    public static DriveHandle getDriveHandle() {
+        if (self == null) {
             self = new DriveHandle();
         }
         return self;
     }
-    
+
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = Main.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -87,8 +87,8 @@ public class DriveHandle {
                 .build();
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
-    
-    public static void printFiles(List<File> files){
+
+    public static void printFiles(List<File> files) {
         if (files == null || files.isEmpty()) {
             System.out.println("No files found.");
         } else {
@@ -98,11 +98,9 @@ public class DriveHandle {
             }
         }
     }
-    
-  
+
     //returns the uploaded file id
-   
-    public String uploadFile(java.io.File file) throws Exception{
+    public String uploadFile(java.io.File file) throws Exception {
         try {
             File fileMetadata = new File();
             fileMetadata.setName(file.getName());
@@ -118,8 +116,8 @@ public class DriveHandle {
             return null;
         }
     }
-    
-    public ByteArrayOutputStream downloadFile(String fileId){
+
+    public ByteArrayOutputStream downloadFile(String fileId) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             service.files().get(fileId).executeMediaAndDownloadTo(outputStream);
@@ -130,12 +128,11 @@ public class DriveHandle {
             return null;
         }
     }
-    
-    public List<File> getFilesList(){
+
+    public List<File> getFilesList() {
         try {
-            System.out.println(service.about().get());
             FileList result = service.files().list()
-                    .setQ("'"+SHAREDFOLDERID+"' in parents")
+                    .setQ("'" + SHAREDFOLDERID + "' in parents")
                     .setSpaces("drive")
                     .execute();
             return result.getFiles();
@@ -143,5 +140,21 @@ public class DriveHandle {
             System.err.println("\n\nSomething went wrong, when retrieving files.\n\n");
             return null;
         }
-    }   
+    }
+
+    public HashMap<String, String> getUserInfo() {
+        try {
+            User user = service.about().get()
+                    .setFields("user(displayName,emailAddress)")
+                    .execute().getUser();
+            HashMap<String, String> info = new HashMap();
+            info.put(USEREMAIL, user.getEmailAddress());
+            info.put(USERNAME, user.getDisplayName());
+            return info;
+        } catch (IOException ex) {
+            Logger.getLogger(DriveHandle.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+    }
 }

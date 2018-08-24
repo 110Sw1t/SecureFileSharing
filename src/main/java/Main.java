@@ -36,8 +36,8 @@ public class Main {
 //            new FileOutputStream("C:\\Users\\fadia\\Desktop\\notes\\"+name).write(fileContent);
 //            System.out.println(handle.uploadFile(selectedFile));;
 //        }
-        DriveHandle.printFiles(handle.getFilesList());
-
+//        DriveHandle.printFiles(handle.getFilesList());
+          System.out.println(handle.getUserInfo());
 //        handle.downloadFile("1RRLjz4YBw9BIPAwUMyXe5hgMa7Xkq7U0");
     }
 }
