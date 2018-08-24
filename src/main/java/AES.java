@@ -17,18 +17,18 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AES {
 
-    public SecretKey keyGenerate() throws NoSuchAlgorithmException {
+    public static SecretKey keyGenerate() throws NoSuchAlgorithmException {
         KeyGenerator key = KeyGenerator.getInstance("AES");
         key.init(128);
         SecretKey finalKey = key.generateKey();
         return finalKey;
     }
 
-    public static byte[] encrypt(SecretKey key, String plainText) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
+    public static byte[] encrypt(SecretKey key, byte[] plainText) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
         Cipher cipher = Cipher.getInstance("AES");
         SecretKeySpec secretKey = new SecretKeySpec(key.getEncoded(), "AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] cipherText = cipher.doFinal(plainText.getBytes("UTF8"));
+        byte[] cipherText = cipher.doFinal(plainText);
         return cipherText;
     }
 
