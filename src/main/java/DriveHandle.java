@@ -18,10 +18,12 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import java.io.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,13 +94,14 @@ public class DriveHandle {
         } else {
             System.out.println("Files: ");
             for (File file : files) {
-                System.out.println(file);
+                System.out.println(file.getName());
             }
         }
     }
     
   
     //returns the uploaded file id
+   
     public String uploadFile(java.io.File file) throws Exception{
         try {
             File fileMetadata = new File();
@@ -116,8 +119,21 @@ public class DriveHandle {
         }
     }
     
+    public ByteArrayOutputStream downloadFile(String fileId){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            service.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+            System.out.println(outputStream);
+            return outputStream;
+        } catch (IOException ex) {
+            Logger.getLogger(DriveHandle.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
     public List<File> getFilesList(){
         try {
+            System.out.println(service.about().get());
             FileList result = service.files().list()
                     .setQ("'"+SHAREDFOLDERID+"' in parents")
                     .setSpaces("drive")
