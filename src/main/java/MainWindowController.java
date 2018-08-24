@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+import com.google.api.client.repackaged.com.google.common.base.Splitter;
+import com.google.common.collect.FluentIterable;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
@@ -16,6 +18,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -33,6 +38,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
 import org.fxmisc.richtext.InlineCssTextArea;
 
 /**
@@ -114,6 +120,7 @@ public class MainWindowController implements Initializable {
         EncryptedFileToBeDecBtn.setOnAction(e->ChooseFile(EncryptedFileToBeDecTxt));
         EncryptBtn.setOnAction(e->EncryptAESwithPublic());
         DecryptBtn.setOnAction(e->DecryptFile());
+        UploadBtn.setOnAction(e->UploadFile());
         //listview selection listener
         ListFiles.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
         @Override
@@ -241,6 +248,20 @@ public class MainWindowController implements Initializable {
     public void UploadFile() {
         //TO DO upload file from this function
         String FileToUpload = ChoosedFile.getText().toString();
+        if(ChoosedFile.getText().equals(""))
+        {
+            logAppendTex("Please Choose the file you want to upload \n", RED , FONTBIG, FONTWEIGHTBIG);
+        }
+        else
+        {
+            try {
+                FileUtils.readFileToByteArray(new File(PrivateKeyString));
+                byte[] AddedHeader = SetHeader(FileUtils.readFileToByteArray(new File(PrivateKeyString)));
+                GetHeader(AddedHeader);
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     public void logAppendTex(String s , String Color  , String FontSize , String FontWeight)
@@ -280,6 +301,36 @@ public class MainWindowController implements Initializable {
             logAppendTex("File Decrypted Successfully and You will find it on the project folder\n", GREEN , FONTBIG, FONTWEIGHTBIG);
 
         }
+    }
+    
+    public byte[] SetHeader(byte[] encrypted)
+    {
+        String ID= "1|";
+        String Email = "kero|";
+        String Size = encrypted.length+"|";
+        
+        String Appending = ID+Email+Size;
+        String string = new String(encrypted, StandardCharsets.UTF_8 );
+        String NewFileString = Appending+string;
+        byte[] NewileBytes = NewFileString.getBytes(StandardCharsets.UTF_8);
+        return NewileBytes;
+        
+    }
+        public byte[] GetHeader(byte[] RemoveHeader)
+    {
+        String string = new String(RemoveHeader, StandardCharsets.UTF_8 );
+        //Iterable<String> r = Splitter.on('|').limit(4).split(string);
+        String [] r = FluentIterable.from(Splitter.on("|").limit(4).split(string)).toArray(String.class);
+        String ID=  r[0];
+        OwnerIDLbl.setText(ID);
+        String Email = r[1];
+        OwnerEmailLbl.setText(Email);
+        String Size = r[2];
+        SizeLbl.setText(Size);
+        String encryptedFile = r[3];
+        byte[] Original = encryptedFile.getBytes(StandardCharsets.UTF_8);
+        return Original;
+        
     }
 
 }
