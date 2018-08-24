@@ -49,4 +49,13 @@
     -fx-text-fill: #000;
     -fx-background-color: -fx-secondary;
     
+    
+}
+.InlineCssTextArea
+{
+    background-color: -fx-primary;
+    -fx-border-color:#fff;
+    -fx-border-radius: 0.2cm;
+        -fx-text-fill:#fff;
+        
 }

@@ -72,8 +72,8 @@ public class Main extends Application {
         stage.setTitle("Cloud File Encryptor");
         String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
         stage.getScene().getStylesheets().add(css);
-        stage.setHeight(440);
-        stage.setWidth(770);
+//        stage.setHeight(440);
+//        stage.setWidth(770);
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
         stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
