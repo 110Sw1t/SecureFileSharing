@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import org.fxmisc.richtext.InlineCssTextArea?>
+
+<AnchorPane id="AnchorPane" prefHeight="582.0" prefWidth="762.0" styleClass="mainFxmlClass" stylesheets="@../styles/mainwindow.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+      <JFXTextField fx:id="ChoosedFile" editable="false" labelFloat="true" layoutX="14.0" layoutY="22.0" prefHeight="15.0" prefWidth="315.0" promptText="Choose file to upload" style="-fx-font-size: 12px;" />
+      <JFXButton fx:id="ChooseUploadBtn" layoutX="349.0" layoutY="21.0" text="Choose" />
+      <Pane layoutX="530.0" layoutY="14.0" prefHeight="79.0" prefWidth="225.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+         <children>
+            <Label layoutX="19.0" layoutY="14.0" text="ID:" textFill="WHITE" />
+            <Label layoutX="18.0" layoutY="42.0" text="Email:" textFill="WHITE" />
+            <Label fx:id="IDTxt" layoutX="65.0" layoutY="14.0" textFill="WHITE" />
+            <Label fx:id="EmailTxt" layoutX="65.0" layoutY="42.0" textFill="WHITE" />
+         </children>
+      </Pane>
+      <JFXListView fx:id="ListFiles" layoutX="529.0" layoutY="107.0" prefHeight="244.0" prefWidth="225.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm;" />
+      <JFXButton fx:id="ListFilesBtn" layoutX="677.0" layoutY="361.0" onAction="#ChooseDirectory" text="List Files" />
+      <JFXButton fx:id="ClearBtn" layoutX="549.0" layoutY="361.0" onAction="#ClearList" prefHeight="27.0" prefWidth="63.0" text="Clear" />
+      <JFXButton fx:id="UploadBtn" layoutX="428.0" layoutY="21.0" onAction="#UploadFile" text="Upload" />
+      <Label layoutX="14.0" layoutY="388.0" style="-fx-font-style: bold;" text="Log" textFill="WHITE" />
+      <InlineCssTextArea fx:id="log" autoScrollOnDragDesired="false" editable="false" layoutX="7.0" layoutY="406.0" prefHeight="162.0" prefWidth="742.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm; -fx-text-fill: #fff;" stylesheets="@../styles/mainwindow.css" wrapText="true" />
+      <JFXTextField fx:id="AESKeyToEncryptTxt" editable="false" labelFloat="true" layoutX="13.0" layoutY="82.0" prefHeight="15.0" prefWidth="315.0" promptText="Please Choose the AES Key to encrypt with the public key" style="-fx-font-size: 12px;" />
+      <JFXButton fx:id="AESKeyToEncryptBtn" layoutX="349.0" layoutY="81.0" prefHeight="27.0" prefWidth="116.0" text="Choos AES Key" />
+      <JFXButton fx:id="PublicKeyToEncryptWithBtn" layoutX="349.0" layoutY="126.0" text="Choose Public Key" />
+      <JFXButton fx:id="EncryptBtn" layoutX="464.0" layoutY="104.0" text="Encrypt" />
+      <JFXTextField fx:id="PublicKeyToEncryptWithTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="127.0" prefHeight="15.0" prefWidth="315.0" promptText="Please Choose the Public Key to encrypt with " style="-fx-font-size: 12px;" />
+      <JFXTextField fx:id="EncryptedFileToBeDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="176.0" prefHeight="25.0" prefWidth="420.0" promptText="Please Choose the Encrypted File which will be decrypted with your private key" style="-fx-font-size: 12px;" />
+      <JFXButton fx:id="EncryptedFileToBeDecBtn" layoutX="456.0" layoutY="176.0" text="Choose" />
+      <JFXTextField fx:id="FileToDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="219.0" prefHeight="25.0" prefWidth="315.0" promptText="Please select the file you need from the list" style="-fx-font-size: 12px;" />
+      <JFXButton fx:id="DecryptBtn" layoutX="349.0" layoutY="218.0" text="Decrypt" />
+      <Pane layoutX="14.0" layoutY="278.0" prefHeight="97.0" prefWidth="420.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+         <children>
+            <Label layoutX="15.0" layoutY="37.0" text="Owner ID:" textFill="WHITE" />
+            <Label layoutX="14.0" layoutY="65.0" text="Owner Email:" textFill="WHITE" />
+            <Label layoutX="13.0" layoutY="15.0" text="Selected File Details" textFill="WHITE" />
+            <Label fx:id="OwnerIDLbl" layoutX="79.0" layoutY="37.0" prefHeight="17.0" prefWidth="0.0" textFill="WHITE" />
+            <Label fx:id="OwnerEmailLbl" layoutX="97.0" layoutY="65.0" prefHeight="17.0" prefWidth="8.0" textFill="WHITE" />
+            <Label layoutX="178.0" layoutY="15.0" text="Size:" textFill="WHITE" />
+            <Label fx:id="SizeLbl" layoutX="217.0" layoutY="15.0" prefHeight="17.0" prefWidth="0.0" textFill="WHITE" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
