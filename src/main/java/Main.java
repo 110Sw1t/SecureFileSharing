@@ -59,6 +59,32 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         DriveHandle handle = DriveHandle.getDriveHandle();
+
+//        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+////
+//        int returnValue = jfc.showOpenDialog(null);
+        // int returnValue = jfc.showSaveDialog(null);
+
+//        if (returnValue == JFileChooser.APPROVE_OPTION) {
+//            File selectedFile = jfc.getSelectedFile();
+//            String name = selectedFile.getName();
+//            byte[] fileContent = Files.readAllBytes(selectedFile.toPath());
+//            new FileOutputStream("C:\\Users\\fadia\\Desktop\\notes\\"+name).write(fileContent);
+//            System.out.println(handle.uploadFile(selectedFile));;
+//        }
+//        DriveHandle.printFiles(handle.getFilesList());
+//          System.out.println(handle.getUserInfo());
+//        handle.downloadFile("1RRLjz4YBw9BIPAwUMyXe5hgMa7Xkq7U0");
+//        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+//
+//        int returnValue = jfc.showOpenDialog(null);
+//        // int returnValue = jfc.showSaveDialog(null);
+//
+//        if (returnValue == JFileChooser.APPROVE_OPTION) {
+//            File selectedFile = jfc.getSelectedFile();
+//            System.out.println(handle.uploadFile(selectedFile));;
+//        }
+//        DriveHandle.printFiles(handle.getFilesList());
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
         MainWindowController controller = new MainWindowController();
