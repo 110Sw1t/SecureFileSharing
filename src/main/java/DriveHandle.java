@@ -44,7 +44,8 @@ public class DriveHandle {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     public static final String USERNAME = "uname";
     public static final String USEREMAIL = "email";
-
+    public static final String USERID = "id";
+    
     /**
      * Global instance of the scopes required by this quickstart. If modifying
      * these scopes, delete your previously saved credentials/ folder.
@@ -145,11 +146,12 @@ public class DriveHandle {
     public HashMap<String, String> getUserInfo() {
         try {
             User user = service.about().get()
-                    .setFields("user(displayName,emailAddress)")
+                    .setFields("user(displayName,emailAddress,permissionId)")
                     .execute().getUser();
             HashMap<String, String> info = new HashMap();
             info.put(USEREMAIL, user.getEmailAddress());
             info.put(USERNAME, user.getDisplayName());
+            info.put(USERID, user.getPermissionId());
             return info;
         } catch (IOException ex) {
             Logger.getLogger(DriveHandle.class.getName()).log(Level.SEVERE, null, ex);
