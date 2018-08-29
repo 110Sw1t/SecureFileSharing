@@ -28,6 +28,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -109,6 +110,7 @@ public class MainWindowController implements Initializable {
     private final String PrivateKeyString = "PrivateKey";
     private final String AESKeyString = "AESKey";
     private final String InitialVectorString = "IV";
+    private String AESStringKey ;
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private SecretKey AESKey;
@@ -158,6 +160,8 @@ public class MainWindowController implements Initializable {
             publicKey = keys.getPublic();
             privateKey= keys.getPrivate();
             ob = AES.keyGenerate();
+            SecretKey key = (SecretKey) ob[0];
+            AESStringKey = Base64.getEncoder().encodeToString(key.getEncoded());
             logAppendTex("Public Key and Private Key Created Successfully \n", GREEN , FONTBIG, FONTWEIGHTBIG);
             logAppendTex("your public key is: \n"+ keys.getPublic().toString(), WHITE , FONTSMALL, FONTSMALL);
                         logAppendTex("AES Key Created Successfully \n------------------------------------------------\n", GREEN , FONTBIG, FONTWEIGHTBIG);
@@ -191,7 +195,8 @@ public class MainWindowController implements Initializable {
                 cipher.init(Cipher.ENCRYPT_MODE, privateKey);
                 SecretKey s = (SecretKey) ob[0];
                 byte[] b = cipher.doFinal(s.getEncoded());
-                oos.write(b);            }
+                oos.write(b);            
+            }
             else 
             {
                 InitialVector = (byte[]) ob[1];
@@ -311,7 +316,7 @@ public class MainWindowController implements Initializable {
             //Decryption test
             byte [] removedHeader = GetHeader(EncryptedWithHeader);
             try {
-                byte [] AESdecrypted = AES.decrypt(AESKey, removedHeader, ipsv);
+                byte [] AESdecrypted = AES.decrypt(AESKey,InitialVector, removedHeader);
                 FileUtils.writeByteArrayToFile(new File("dd.txt"), AESdecrypted);
             } catch (Exception ex) {
                 Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -324,7 +329,7 @@ public class MainWindowController implements Initializable {
     public byte[] AESEncrypt(File FileToUpload)
     {
         try{
-        byte [] AESEncrypted = AES.encrypt(AESKey, FileUtils.readFileToByteArray(new File(FileToUpload)),ipsv);
+        byte [] AESEncrypted = AES.encrypt(AESKey, InitialVector,FileUtils.readFileToByteArray(FileToUpload));
         byte[] AddedHeader = SetHeader(AESEncrypted);
         logAppendTex("File Encrypted with AES and Header added Successfully", GREEN , FONTBIG, FONTWEIGHTBIG);
         return AddedHeader;

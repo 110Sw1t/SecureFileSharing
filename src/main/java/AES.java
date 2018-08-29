@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Random;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -48,26 +49,63 @@ public class AES {
         Object[] ob = new Object[2];
         ob[0] = finalKey;
         ob[1] = ivspec;
+
         return ob;
     }
 
-    public static byte[] encrypt(SecretKey key, File file,IvParameterSpec ivspec) throws Exception {
-        Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        OutputStream out = new FileOutputStream(file);
-       
-        ci.init(Cipher.ENCRYPT_MODE, key, ivspec);
-        try (FileInputStream in = new FileInputStream(file)) {
-            processFile(ci, in, out);
-}
-        return cipherText;
+//    public static byte[] encrypt(SecretKey key, File file,IvParameterSpec ivspec) throws Exception {
+//        Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        OutputStream out = new FileOutputStream(file);
+//       
+//        ci.init(Cipher.ENCRYPT_MODE, key, ivspec);
+//        try (FileInputStream in = new FileInputStream(file)) {
+//            processFile(ci, in, out);
+//}
+//        return cipherText;
+//    }
+
+//    public static byte[] decrypt(SecretKey key, byte[] cipherText,IvParameterSpec ivspec) throws Exception {
+//        Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        ci.init(Cipher.DECRYPT_MODE, key,ivspec);
+//        
+//        byte[] plainText = ci.doFinal(cipherText);
+//        return plainText;
+//    }
+    
+    public static byte[] encrypt(SecretKey key, byte[] initVector, byte [] file) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector);
+            //SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+
+            byte[] encrypted = cipher.doFinal(file);
+            return encrypted;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
-    public static byte[] decrypt(SecretKey key, byte[] cipherText,IvParameterSpec ivspec) throws Exception {
-        Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        ci.init(Cipher.DECRYPT_MODE, key,ivspec);
-        
-        byte[] plainText = ci.doFinal(cipherText);
-        return plainText;
+    public static byte[] decrypt(SecretKey key, byte []  initVector, byte [] encrypted) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector);
+            //SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+
+            byte[] original = cipher.doFinal(encrypted);
+
+            return original;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
+
 
 }
