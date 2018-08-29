@@ -299,6 +299,7 @@ public class MainWindowController implements Initializable {
         ListFiles.getItems().clear();
     }
 
+    
     public void UploadFile() {
         //TO DO upload file from this function
         String FileToUploadPath = ChoosedFile.getText().toString();
