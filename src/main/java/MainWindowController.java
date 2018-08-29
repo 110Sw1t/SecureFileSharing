@@ -41,9 +41,12 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.io.FileUtils;
 import org.fxmisc.richtext.InlineCssTextArea;
 
@@ -105,9 +108,13 @@ public class MainWindowController implements Initializable {
     private final String PublicKeyString = "PublicKey";
     private final String PrivateKeyString = "PrivateKey";
     private final String AESKeyString = "AESKey";
+    private final String InitialVectorString = "IV";
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private SecretKey AESKey;
+    private byte[] InitialVector = new byte[128/8];
+    IvParameterSpec ipsv ;
+    Object[] ob ;
     private int lengthBefore;
     private String s;
     private final String GREEN = "#008000";
@@ -150,7 +157,7 @@ public class MainWindowController implements Initializable {
             keys = RSA.buildKeyPair();
             publicKey = keys.getPublic();
             privateKey= keys.getPrivate();
-            AESKey = AES.keyGenerate();
+            ob = AES.keyGenerate();
             logAppendTex("Public Key and Private Key Created Successfully \n", GREEN , FONTBIG, FONTWEIGHTBIG);
             logAppendTex("your public key is: \n"+ keys.getPublic().toString(), WHITE , FONTSMALL, FONTSMALL);
                         logAppendTex("AES Key Created Successfully \n------------------------------------------------\n", GREEN , FONTBIG, FONTWEIGHTBIG);
@@ -159,12 +166,15 @@ public class MainWindowController implements Initializable {
             SaveKey(AESKey,AESKeyString);
             logAppendTex("\nyour public, private and AES Keys saved successfully in the project folder"+DASHEDLINE, GREEN , FONTBIG, FONTWEIGHTBIG);
 
-        } catch (NoSuchAlgorithmException ex) {
+        
+        } catch (InvalidKeyException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (Exception ex) {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }  
         
     }
-    public void SaveKey(Key k, String kt) {
+    public void SaveKey(Key k, String kt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         try {
             String fileName = kt;
             FileOutputStream fos;
@@ -175,9 +185,18 @@ public class MainWindowController implements Initializable {
             } else if( kt.equals(PublicKeyString)) {
                 oos.writeObject((PublicKey) k);
             }
-            else
+            else if(kt.equals(AESKeyString))
             {
-                oos.writeObject((SecretKey) k);
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+                SecretKey s = (SecretKey) ob[0];
+                byte[] b = cipher.doFinal(s.getEncoded());
+                oos.write(b);            }
+            else 
+            {
+                InitialVector = (byte[]) ob[1];
+                oos.write(InitialVector);
+                
             }
 
             oos.close();
@@ -198,9 +217,20 @@ public class MainWindowController implements Initializable {
             } else if( kt.equals(PublicKeyString)) {
                 publicKey = (PublicKey) ois.readObject();
             }
+            else if (kt.equals(AESKeyString))
+            {
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.DECRYPT_MODE, publicKey);
+                byte[] b = new byte[256];
+                ois.read(b);
+                byte[] keyb = cipher.doFinal(b);
+                SecretKeySpec skey = new SecretKeySpec(keyb, "AES");
+                
+            }
             else
             {
-                AESKey = (SecretKey) ois.readObject();
+                 ois.read(InitialVector);
+                 ipsv = new IvParameterSpec(InitialVector);
             }
             ois.close();
         } catch (FileNotFoundException ex) {
@@ -266,20 +296,22 @@ public class MainWindowController implements Initializable {
 
     public void UploadFile() {
         //TO DO upload file from this function
-        String FileToUpload = ChoosedFile.getText().toString();
+        String FileToUploadPath = ChoosedFile.getText().toString();
         if(ChoosedFile.getText().equals(""))
         {
             logAppendTex("Please Choose the file you want to upload \n", RED , FONTBIG, FONTWEIGHTBIG);
         }
         else
         {
+            File FileToUpload = new File(FileToUploadPath);
             byte [] EncryptedWithHeader = AESEncrypt(FileToUpload);
+            String FileToUploadName = FileToUpload.getName();
             //upload file here
             
             //Decryption test
             byte [] removedHeader = GetHeader(EncryptedWithHeader);
             try {
-                byte [] AESdecrypted = AES.decrypt(AESKey, removedHeader);
+                byte [] AESdecrypted = AES.decrypt(AESKey, removedHeader, ipsv);
                 FileUtils.writeByteArrayToFile(new File("dd.txt"), AESdecrypted);
             } catch (Exception ex) {
                 Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -289,10 +321,10 @@ public class MainWindowController implements Initializable {
         }
     }
     
-    public byte[] AESEncrypt(String FileToUpload)
+    public byte[] AESEncrypt(File FileToUpload)
     {
         try{
-        byte [] AESEncrypted = AES.encrypt(AESKey, FileUtils.readFileToByteArray(new File(FileToUpload)));
+        byte [] AESEncrypted = AES.encrypt(AESKey, FileUtils.readFileToByteArray(new File(FileToUpload)),ipsv);
         byte[] AddedHeader = SetHeader(AESEncrypted);
         logAppendTex("File Encrypted with AES and Header added Successfully", GREEN , FONTBIG, FONTWEIGHTBIG);
         return AddedHeader;
