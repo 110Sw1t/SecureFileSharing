@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -57,11 +59,10 @@ import org.fxmisc.richtext.InlineCssTextArea;
  * @author KyrillosNagyWadieYas
  */
 public class MainWindowController implements Initializable {
-    
+
     /**
      * Initializes the controller class.
      */
-    
     @FXML
     private Label IDTxt;
     @FXML
@@ -76,7 +77,7 @@ public class MainWindowController implements Initializable {
     private JFXButton ListFilesBtn;
     @FXML
     private JFXButton UploadBtn;
-    @FXML 
+    @FXML
     private InlineCssTextArea log;
     @FXML
     private JFXTextField PublicKeyToEncryptWithTxt;
@@ -102,81 +103,82 @@ public class MainWindowController implements Initializable {
     private Label OwnerIDLbl;
     @FXML
     private Label OwnerEmailLbl;
-    
-    
+
     private DriveHandle handle;
-    private KeyPair keys ; 
+    private KeyPair keys;
     private final String PublicKeyString = "PublicKey";
     private final String PrivateKeyString = "PrivateKey";
     private final String AESKeyString = "AESKey";
     private final String InitialVectorString = "IV";
-    private String AESStringKey ;
+    private String AESStringKey;
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private SecretKeySpec AESKey;
-    private byte[] InitialVector = new byte[128/8];
-    IvParameterSpec ipsv ;
+    private byte[] InitialVector = new byte[128 / 8];
+    IvParameterSpec ipsv;
     Object[] ob = new Object[2];
     private int lengthBefore;
     private String s;
-    private AES aes; 
+    private AES aes;
     private final String GREEN = "#008000";
     private final String RED = "#FF0000";
     private final String WHITE = "#FFF";
     private final String DASHEDLINE = "\n-------------------------------------------------------------------------------------------------------------------------\n";
     private final String FONTBIG = "15";
-    private final String FONTSMALL= "11";
-    private final String FONTWEIGHTBIG= "700";
-    private final String FONTWEIGHTSMALL= "200";
+    private final String FONTSMALL = "11";
+    private final String FONTWEIGHTBIG = "700";
+    private final String FONTWEIGHTSMALL = "200";
+    private String dataBeforeEncryption;
+    private HashMap<String, String> fileIDs = new HashMap<>();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        aes= new AES();
-        //buttons Action listener
-        ChooseUploadBtn.setOnAction(e->ChooseFile(ChoosedFile));
-        AESKeyToEncryptBtn.setOnAction(e->ChooseFile(AESKeyToEncryptTxt));
-        PublicKeyToEncryptWithBtn.setOnAction(e->ChooseFile(PublicKeyToEncryptWithTxt));
-        EncryptedFileToBeDecBtn.setOnAction(e->ChooseFile(EncryptedFileToBeDecTxt));
-        EncryptBtn.setOnAction(e->EncryptAESwithPublic());
-        DecryptBtn.setOnAction(e->DecryptFile());
-        UploadBtn.setOnAction(e->UploadFile());
+        aes = new AES();
+
+//buttons Action listener
+        ChooseUploadBtn
+                .setOnAction(e -> ChooseFile(ChoosedFile));
+        AESKeyToEncryptBtn.setOnAction(e -> ChooseFile(AESKeyToEncryptTxt));
+        PublicKeyToEncryptWithBtn.setOnAction(e -> ChooseFile(PublicKeyToEncryptWithTxt));
+        EncryptedFileToBeDecBtn.setOnAction(e -> ChooseFile(EncryptedFileToBeDecTxt));
+        EncryptBtn.setOnAction(e -> EncryptAESwithPublic());
+        DecryptBtn.setOnAction(e -> DecryptFile());
+        UploadBtn.setOnAction(e -> UploadFile());
         //listview selection listener
         ListFiles.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            System.out.println("enteredddd......");
-            
-            FileToDecTxt.setText(newValue);
-            logAppendTex("Choosed File From List:\n "  , RED , FONTBIG, FONTWEIGHTBIG);
-            logAppendTex(newValue +"\n"  , WHITE , FONTSMALL, FONTWEIGHTSMALL);
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println("enteredddd......");
 
-                
+                FileToDecTxt.setText(newValue);
+                logAppendTex("Choosed File From List:\n ", RED, FONTBIG, FONTWEIGHTBIG);
+                logAppendTex(newValue + "\n", WHITE, FONTSMALL, FONTWEIGHTSMALL);
+
             }
         });
-        
-        
-        
+
         try {
             // TODO
             keys = RSA.buildKeyPair();
             publicKey = keys.getPublic();
-            privateKey= keys.getPrivate();
-//            ob = aes.GenerateKey();
-            logAppendTex("Public Key and Private Key Created Successfully \n", GREEN , FONTBIG, FONTWEIGHTBIG);
-            logAppendTex("your public key is: \n"+ keys.getPublic().toString(), WHITE , FONTSMALL, FONTSMALL);
-                        logAppendTex("AES Key Created Successfully \n------------------------------------------------\n", GREEN , FONTBIG, FONTWEIGHTBIG);
+            privateKey = keys.getPrivate();
+//          ob = aes.GenerateKey();
+            logAppendTex("Public Key and Private Key Created Successfully \n", GREEN, FONTBIG, FONTWEIGHTBIG);
+            logAppendTex("your public key is: \n" + keys.getPublic().toString(), WHITE, FONTSMALL, FONTSMALL);
+            logAppendTex("AES Key Created Successfully \n------------------------------------------------\n", GREEN, FONTBIG, FONTWEIGHTBIG);
             SaveKey(publicKey, PublicKeyString);
             SaveKey(privateKey, PrivateKeyString);
-            SaveKey(AESKey,AESKeyString);
-            logAppendTex("\nyour public, private and AES Keys saved successfully in the project folder"+DASHEDLINE, GREEN , FONTBIG, FONTWEIGHTBIG);
+            SaveKey(AESKey, AESKeyString);
+            logAppendTex("\nyour public, private and AES Keys saved successfully in the project folder" + DASHEDLINE, GREEN, FONTBIG, FONTWEIGHTBIG);
 
-        
         } catch (InvalidKeyException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }  
-        
+        }
+
     }
+
     public void SaveKey(Key k, String kt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         try {
             String fileName = kt;
@@ -185,23 +187,20 @@ public class MainWindowController implements Initializable {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             if (kt.equals(PrivateKeyString)) {
                 oos.writeObject((PrivateKey) k);
-            } else if( kt.equals(PublicKeyString)) {
+            } else if (kt.equals(PublicKeyString)) {
                 oos.writeObject((PublicKey) k);
-            }
-            else if(kt.equals(AESKeyString))
-            {
+            } else if (kt.equals(AESKeyString)) {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-                
                 byte[] b = cipher.doFinal(AESKey.getEncoded());
-                oos.write(b);            
+                oos.write(b);
+            } else {
+//                byte[] iv = (byte[]) ob[1];
+//                oos.write(iv);
+//                SecretKey s = (SecretKey) ob[0];
+//                byte[] b = cipher.doFinal(s.getEncoded());
+//                oos.write(b);
             }
-            else
-            {
-                byte[] iv = (byte[])ob[1];
-                oos.write(iv);
-            }
-            
 
             oos.close();
         } catch (FileNotFoundException ex) {
@@ -218,24 +217,24 @@ public class MainWindowController implements Initializable {
             ObjectInputStream ois = new ObjectInputStream(fin);
             if (kt.equals(PrivateKeyString)) {
                 privateKey = (PrivateKey) ois.readObject();
-            } else if( kt.equals(PublicKeyString)) {
+            } else if (kt.equals(PublicKeyString)) {
                 publicKey = (PublicKey) ois.readObject();
-            }
-            else if (kt.equals(AESKeyString))
-            {
+            } else if (kt.equals(AESKeyString)) {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.DECRYPT_MODE, publicKey);
                 byte[] b = new byte[256];
                 ois.read(b);
                 byte[] keyb = cipher.doFinal(b);
                 AESKey = new SecretKeySpec(keyb, "AES");
-                
-            }
-            else
-            {
+
+            } else {
                 //ois.read(b);
+                 
+//                SecretKeySpec skey = new SecretKeySpec(keyb, "AES");
+
             }
-           
+            
+
             ois.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
@@ -256,26 +255,28 @@ public class MainWindowController implements Initializable {
         File file = fc.showOpenDialog(null);
         if (file != null) {
             tf.setText(file.getAbsolutePath());
-            logAppendTex(tf.getPromptText()+":\n "  , RED , FONTBIG, FONTWEIGHTBIG);
-            logAppendTex(file.getAbsolutePath() +"\n"  , WHITE , FONTSMALL, FONTWEIGHTSMALL);
+            logAppendTex(tf.getPromptText() + ":\n ", RED, FONTBIG, FONTWEIGHTBIG);
+            logAppendTex(file.getAbsolutePath() + "\n", WHITE, FONTSMALL, FONTWEIGHTSMALL);
 
         }
     }
 
     public void ChooseDirectory() {
 
-        logAppendTex("Listing Files please Wait....\n", RED , FONTBIG, FONTWEIGHTBIG);
+        logAppendTex("Listing Files please Wait....\n", RED, FONTBIG, FONTWEIGHTBIG);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 ListFiles.getItems().clear();
+                fileIDs = new HashMap<>();
                 List<com.google.api.services.drive.model.File> fList = handle.getFilesList();
 
-        for (com.google.api.services.drive.model.File f : fList) {
-
-            ListFiles.getItems().add(fList.toString());
-        }
-                logAppendTex("File Listed Successfully!\n", GREEN , FONTBIG, FONTWEIGHTBIG);
+                for (com.google.api.services.drive.model.File f : fList) {
+                    String fileName = f.getName();
+                    fileIDs.put(fileName, f.getId());
+                    ListFiles.getItems().add(fileName);
+                }
+                logAppendTex("File Listed Successfully!\n", GREEN, FONTBIG, FONTWEIGHTBIG);
 
             }
         });
@@ -298,26 +299,26 @@ public class MainWindowController implements Initializable {
         ListFiles.getItems().clear();
     }
 
-    public void UploadFile()  {
+    public void UploadFile() {
         //TO DO upload file from this function
         String FileToUploadPath = ChoosedFile.getText().toString();
-        if(ChoosedFile.getText().equals(""))
-        {
-            logAppendTex("Please Choose the file you want to upload \n", RED , FONTBIG, FONTWEIGHTBIG);
-        }
-        else
-        {
+
+        if (ChoosedFile.getText().equals("")) {
+            logAppendTex("Please Choose the file you want to upload \n", RED, FONTBIG, FONTWEIGHTBIG);
+        } else {
             try {
-            File FileToUpload = new File(FileToUploadPath);
-            String str = FileUtils.readFileToString(FileToUpload);
-            
-                String AESEncrypted = aes.encrypt(str);
-                String AddedHeader = SetHeader(AESEncrypted);
-                
-                String HeaderRemoved = GetHeader(AddedHeader);
-                String AESdecrypted = aes.decrypt(HeaderRemoved);
-                System.out.println("AESdecrypted = " + AESdecrypted);
-                FileUtils.writeByteArrayToFile(new File("dd.txt"), AESdecrypted.getBytes());
+                File FileToUpload = new File(FileToUploadPath);
+                String EncryptedWithHeader = AESEncrypt(FileToUpload);
+                String encrypteFileWithHeaderToUploadName = "Enc-" + FileToUpload.getName();
+                FileOutputStream encryptedFileOutputStream = new FileOutputStream(encrypteFileWithHeaderToUploadName, false);
+                encryptedFileOutputStream.write(EncryptedWithHeader.getBytes());
+                File encrypteFileWithHeaderToUpload = new File(encrypteFileWithHeaderToUploadName);
+                String fileID = handle.uploadFile(encrypteFileWithHeaderToUpload);
+                logAppendTex("File Encrypted & Uploaded Successfully, Please RE-LIST files\n", GREEN, FONTBIG, FONTWEIGHTBIG);
+                encrypteFileWithHeaderToUpload.delete();
+                //upload file here
+
+//                FileUtils.writeByteArrayToFile(new File("dd.txt"), AESdecrypted);
             } catch (Exception ex) {
                 Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -326,100 +327,103 @@ public class MainWindowController implements Initializable {
 //            //upload file here
 //            
 //            //Decryption test
-//            byte [] removedHeader = GetHeader(EncryptedWithHeader);
-            
-               
+//            byte [] removedHeader = RemoveHeader(EncryptedWithHeader);
+
         }
-            }
-            
-            
-        
-    
-    
-    public String AESEncrypt(File FileToUpload)
-    {
-        try{
-        String AESEncrypted = aes.encrypt(FileUtils.readFileToString(FileToUpload));
-        String AddedHeader = SetHeader(AESEncrypted);
-        logAppendTex("File Encrypted with AES and Header added Successfully", GREEN , FONTBIG, FONTWEIGHTBIG);
-        return AddedHeader;
-        }
-        catch (Exception ex){
-            System.out.println("encryption error");
-        }
-        return null;
     }
-    
-    
-    public void logAppendTex(String s , String Color  , String FontSize , String FontWeight)
-    {
+
+    public String AESEncrypt(File FileToUpload) {
+        try {
+            String AESEncrypted = aes.encrypt(FileUtils.readFileToString(FileToUpload,StandardCharsets.UTF_8));
+            dataBeforeEncryption = (FileUtils.readFileToString(FileToUpload));
+            String AddedHeader = SetHeader(AESEncrypted);
+            logAppendTex("File Encrypted with AES and Header added Successfully", GREEN, FONTBIG, FONTWEIGHTBIG);
+            return AddedHeader;
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public void logAppendTex(String s, String Color, String FontSize, String FontWeight) {
         lengthBefore = log.getText().length();
-        
+
         log.appendText(s);
-        
-        log.setStyle(lengthBefore,(lengthBefore+s.length()),
-                "-fx-fill:" + Color + "; -fx-font-size:" + FontSize+ "px; -fx-font-weight:"+ FontWeight +";");
+
+        log.setStyle(lengthBefore, (lengthBefore + s.length()),
+                "-fx-fill:" + Color + "; -fx-font-size:" + FontSize + "px; -fx-font-weight:" + FontWeight + ";");
         log.requestFollowCaret();
     }
 
     private void EncryptAESwithPublic() {
         String AESFilePath = AESKeyToEncryptTxt.getText();
         String PublicKeyFilePath = PublicKeyToEncryptWithTxt.getText();
-        if(AESFilePath.equals("")||PublicKeyFilePath.equals(""))
-        {
-            logAppendTex("Please Choose The AES Key File and Public Key File to Encrypt with\n", RED , FONTBIG, FONTWEIGHTBIG);
-        }
-        else
-        {
-            logAppendTex("File Encrypted Successfully Please send it to the user who wants it\n", GREEN , FONTBIG, FONTWEIGHTBIG);
+        if (AESFilePath.equals("") || PublicKeyFilePath.equals("")) {
+            logAppendTex("Please Choose The AES Key File and Public Key File to Encrypt with\n", RED, FONTBIG, FONTWEIGHTBIG);
+        } else {
+            logAppendTex("File Encrypted Successfully Please send it to the user who wants it\n", GREEN, FONTBIG, FONTWEIGHTBIG);
 
         }
     }
 
     private void DecryptFile() {
         String AESKey = EncryptedFileToBeDecTxt.getText();
-        String FilePath = FileToDecTxt.getText();
-        if(AESKey.equals("")||FilePath.equals(""))
-        {
-            logAppendTex("Please Choose The AES Key Encrypted File and the file you want to decrypt\n", RED , FONTBIG, FONTWEIGHTBIG);
-        }
-        else
-        {
-            logAppendTex("File Decrypted Successfully and You will find it on the project folder\n", GREEN , FONTBIG, FONTWEIGHTBIG);
+        String FileName = FileToDecTxt.getText();
+        if (AESKey.equals("") || FileName.equals("")) {
+            logAppendTex("Please Choose The AES Key Encrypted File and the file you want to decrypt\n", RED, FONTBIG, FONTWEIGHTBIG);
+        } else {
+            FileOutputStream fos = null;
+            try {
+                ByteArrayOutputStream downloadedFileContentStream = handle.downloadFile(fileIDs.get(FileName));
+                byte[] downloadedFileContentByteArr = downloadedFileContentStream.toByteArray();
+                String downloadedFileContentWithoutHeader = RemoveHeader(new String(downloadedFileContentByteArr,StandardCharsets.UTF_8)); 
+                
+                String decryptedFile = aes.decrypt(downloadedFileContentWithoutHeader);
+                System.out.println("decryptedFile = \n" + decryptedFile.equals(dataBeforeEncryption));
+                fos = new FileOutputStream(FileName, false);
+                fos.write(decryptedFile.getBytes());
+                //Decrypt
+                //Write to file
+//                fos.write(InitialVector);
+                fos.flush();
+                fos.close();
+                logAppendTex("File Decrypted Successfully and You will find it on the project folder\n", GREEN, FONTBIG, FONTWEIGHTBIG);
 
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+
+            }
         }
     }
-    
-    public String SetHeader(String encrypted)
-    {
-        String ID= "1|";
-        String Email = "kero|";
-        String Size = encrypted.length()+"|";
-        
-        String Appending = ID+Email+Size;
+
+    public String SetHeader(String encrypted) {
+        HashMap<String, String> userInfo = handle.getUserInfo();
+        String ID = userInfo.get(DriveHandle.USERID) + "|";
+        String Email = userInfo.get(DriveHandle.USEREMAIL) + "|";
+        String Size = encrypted.getBytes().length + "|";
+
+        String Appending = ID + Email + Size;
         //String string = new String(encrypted, StandardCharsets.UTF_8 );
-        String NewFileString = Appending+encrypted;
+        String NewFileString = Appending + encrypted;
 //        byte[] NewileBytes = NewFileString.getBytes(StandardCharsets.UTF_8);
         return NewFileString;
-        
     }
-        public String GetHeader(String  RemoveHeader)
-    {
+
+    public String RemoveHeader(String RemoveHeader) {
 //        String string = new String(RemoveHeader, StandardCharsets.UTF_8 );
-        //Iterable<String> r = Splitter.on('|').limit(4).split(string);
-        String [] r = FluentIterable.from(Splitter.on("|").limit(4).split(RemoveHeader)).toArray(String.class);
-        String ID=  r[0];
-        System.out.println("ID = " + ID);
+        String[] r = FluentIterable.from(Splitter.on("|").limit(4).split(RemoveHeader)).toArray(String.class);
+        String ID = r[0];
+
         OwnerIDLbl.setText(ID);
         String Email = r[1];
-        System.out.println("Email = " + Email);
         OwnerEmailLbl.setText(Email);
         String Size = r[2];
-        System.out.println("Size = " + Size);
         SizeLbl.setText(Size);
         String encryptedFile = r[3];
         return encryptedFile;
-        
+
     }
 
 }
