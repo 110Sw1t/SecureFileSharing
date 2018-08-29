@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.swing.SwingUtilities;
 
 public class Main extends Application {
@@ -60,6 +62,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         DriveHandle handle = DriveHandle.getDriveHandle();
 
+        KeyGenerator key = KeyGenerator.getInstance("AES");
+        key.init(128);
+        SecretKey finalKey = key.generateKey();
+        System.out.println("finalKey = " + finalKey.toString());
 //        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 ////
 //        int returnValue = jfc.showOpenDialog(null);
@@ -76,36 +82,36 @@ public class Main extends Application {
 //          System.out.println(handle.getUserInfo());
 //        handle.downloadFile("1RRLjz4YBw9BIPAwUMyXe5hgMa7Xkq7U0");
 //        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-//
-//        int returnValue = jfc.showOpenDialog(null);
-//        // int returnValue = jfc.showSaveDialog(null);
-//
-//        if (returnValue == JFileChooser.APPROVE_OPTION) {
-//            File selectedFile = jfc.getSelectedFile();
-//            System.out.println(handle.uploadFile(selectedFile));;
-//        }
-//        DriveHandle.printFiles(handle.getFilesList());
-//        System.out.println(handle.getUserInfo());
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
-        MainWindowController controller = new MainWindowController();
-        controller.setDriveHandle(handle);
-        loader.setController(controller);
-        root = loader.load();
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
-        stage.setTitle("Cloud File Encryptor");
-        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
-        stage.getScene().getStylesheets().add(css);
-//        stage.setHeight(440);
-//        stage.setWidth(770);
-        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
-        stage.setResizable(false);
-        stage.setOnCloseRequest(e -> closeWindow());
-        stage.show();
+////
+////        int returnValue = jfc.showOpenDialog(null);
+////        // int returnValue = jfc.showSaveDialog(null);
+////
+////        if (returnValue == JFileChooser.APPROVE_OPTION) {
+////            File selectedFile = jfc.getSelectedFile();
+////            System.out.println(handle.uploadFile(selectedFile));;
+////        }
+////        DriveHandle.printFiles(handle.getFilesList());
+////        System.out.println(handle.getUserInfo());
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
+//        MainWindowController controller = new MainWindowController();
+//        controller.setDriveHandle(handle);
+//        loader.setController(controller);
+//        root = loader.load();
+//        Stage stage = new Stage();
+//        stage.setScene(new Scene(root));
+//        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
+//        stage.setTitle("Cloud File Encryptor");
+//        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
+//        stage.getScene().getStylesheets().add(css);
+////        stage.setHeight(440);
+////        stage.setWidth(770);
+//        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+//        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+//        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+//        stage.setResizable(false);
+//        stage.setOnCloseRequest(e -> closeWindow());
+//        stage.show();
     }
 
     private void closeWindow() {
