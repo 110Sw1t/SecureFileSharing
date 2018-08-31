@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 public class Main extends Application {
 
     Parent root;
+    MainWindowController controller;
 
     /**
      * @param args the command line arguments
@@ -101,65 +102,35 @@ public class Main extends Application {
 ////        }
 ////        DriveHandle.printFiles(handle.getFilesList());
 ////        System.out.println(handle.getUserInfo());
-//        FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
-//        MainWindowController controller = new MainWindowController();
-//        loader.setController(controller);
-//        root = loader.load();
-//        Stage stage = new Stage();
-//        stage.setScene(new Scene(root));
-//        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
-//        stage.setTitle("Cloud File Encryptor");
-//        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
-//        stage.getScene().getStylesheets().add(css);
-////        stage.setHeight(440);
-////        stage.setWidth(770);
-//        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-//        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-//        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
-//        stage.setResizable(false);
-//        stage.setOnCloseRequest(e -> closeWindow());
-//        stage.show();
-        KeyPair kp = RSA.buildKeyPair();
-        PublicKey pu = kp.getPublic();
-        PrivateKey pr = kp.getPrivate();
-        String fileName = "mypublicrsakeyboy.txt";
-        writeObjectToFile(pu, fileName);
-        pu = (PublicKey)readObjectFromFile(fileName);
-        byte[] C = RSA.encrypt(pu, "A7la msa 3al nas el kwysa");
-        System.out.println(new String(RSA.decrypt(pr, C)));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
+        controller = new MainWindowController();
+        loader.setController(controller);
+        root = loader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
+        stage.setTitle("Cloud File Encryptor");
+        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
+        stage.getScene().getStylesheets().add(css);
+//        stage.setHeight(440);
+//        stage.setWidth(770);
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+        stage.setResizable(false);
+        stage.setOnCloseRequest(e -> closeWindow());
+        stage.show();
+        
 
-        closeWindow();
+//        closeWindow();
     }
 
     
-    public static Object readObjectFromFile(String fileName) {
-        try {
-            FileInputStream fis = new FileInputStream(fileName);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            Object o = ois.readObject();
-            ois.close();
-            System.out.println("The Object  was succesfully written to a file");
-            return o;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
     
-    public static void writeObjectToFile(Object serObj, String fileName) {
-        try {
-            FileOutputStream fos = new FileOutputStream(fileName, false);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(serObj);
-            oos.close();
-            System.out.println("The Object  was succesfully written to a file");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     private void closeWindow() {
+        controller.saveState();
         System.exit(0);
     }
 
@@ -193,3 +164,14 @@ public class Main extends Application {
 //        x = ByteUtils.bytesToInt(arr);
 //        System.out.println("x = " + x);
 //        closeWindow();
+
+
+///////// Testing RSA encryption, decryption with public key saved and loaded from a file
+//        KeyPair kp = RSA.buildKeyPair();
+//        PublicKey pu = kp.getPublic();
+//        PrivateKey pr = kp.getPrivate();
+//        String fileName = "mypublicrsakeyboy.txt";
+//        FileUtils.writeObjectToFile(pu, fileName);
+//        pu = (PublicKey)FileUtils.readObjectFromFile(fileName);
+//        byte[] C = RSA.encrypt(pu, "A7la msa 3al nas el kwysa");
+//        System.out.println(new String(RSA.decrypt(pr, C)));
