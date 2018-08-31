@@ -265,11 +265,11 @@ public class MainWindowController implements Initializable {
                 byte[] encryptedFileContentWithHeaders = prependHeader(encryptedFileContent);
                 System.out.println("encryptedFileContentWithHeaders length = " + encryptedFileContentWithHeaders.length);
                 //Create temporary file instance
-                String encrypteFileWithHeaderToUploadName = "Enc-" + selectedFileForUploading.getName();
-                FileOutputStream encryptedFileOutputStream = new FileOutputStream(encrypteFileWithHeaderToUploadName, false);
+                String fileName = selectedFileForUploading.getName();
+                FileOutputStream encryptedFileOutputStream = new FileOutputStream(fileName, false);
                 encryptedFileOutputStream.write(encryptedFileContentWithHeaders);
                 encryptedFileOutputStream.flush();
-                File encrypteFileWithHeadersToUpload = new File(encrypteFileWithHeaderToUploadName);
+                File encrypteFileWithHeadersToUpload = new File(fileName);
                 //upload encrypted file
                 String fileID = handle.uploadFile(encrypteFileWithHeadersToUpload);
                 //print log update

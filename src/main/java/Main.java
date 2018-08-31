@@ -4,6 +4,9 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +37,6 @@ public class Main extends Application {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-
 //    public static void main(String... args) throws Exception {
 //        
 ////        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -78,7 +80,6 @@ public class Main extends Application {
 ////
 //        int returnValue = jfc.showOpenDialog(null);
         // int returnValue = jfc.showSaveDialog(null);
-
 //        if (returnValue == JFileChooser.APPROVE_OPTION) {
 //            File selectedFile = jfc.getSelectedFile();
 //            String name = selectedFile.getName();
@@ -100,28 +101,62 @@ public class Main extends Application {
 ////        }
 ////        DriveHandle.printFiles(handle.getFilesList());
 ////        System.out.println(handle.getUserInfo());
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
-        MainWindowController controller = new MainWindowController();
-        loader.setController(controller);
-        root = loader.load();
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
-        stage.setTitle("Cloud File Encryptor");
-        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
-        stage.getScene().getStylesheets().add(css);
-//        stage.setHeight(440);
-//        stage.setWidth(770);
-        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
-        stage.setResizable(false);
-        stage.setOnCloseRequest(e -> closeWindow());
-        stage.show();
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
+//        MainWindowController controller = new MainWindowController();
+//        loader.setController(controller);
+//        root = loader.load();
+//        Stage stage = new Stage();
+//        stage.setScene(new Scene(root));
+//        stage.getIcons().add(new Image(Main.class.getClassLoader().getResourceAsStream("imgs/icon.png")));
+//        stage.setTitle("Cloud File Encryptor");
+//        String css = Main.class.getClassLoader().getResource("styles\\mainwindow.css").toExternalForm();
+//        stage.getScene().getStylesheets().add(css);
+////        stage.setHeight(440);
+////        stage.setWidth(770);
+//        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+//        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+//        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+//        stage.setResizable(false);
+//        stage.setOnCloseRequest(e -> closeWindow());
+//        stage.show();
+        KeyPair kp = RSA.buildKeyPair();
+        PublicKey pu = kp.getPublic();
+        PrivateKey pr = kp.getPrivate();
+        String fileName = "mypublicrsakeyboy.txt";
+        writeObjectToFile(pu, fileName);
+        pu = (PublicKey)readObjectFromFile(fileName);
+        byte[] C = RSA.encrypt(pu, "A7la msa 3al nas el kwysa");
+        System.out.println(new String(RSA.decrypt(pr, C)));
 
-//       RandomString rs = new RandomString
-//        closeWindow();
+        closeWindow();
+    }
+
+    
+    public static Object readObjectFromFile(String fileName) {
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Object o = ois.readObject();
+            ois.close();
+            System.out.println("The Object  was succesfully written to a file");
+            return o;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static void writeObjectToFile(Object serObj, String fileName) {
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName, false);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(serObj);
+            oos.close();
+            System.out.println("The Object  was succesfully written to a file");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void closeWindow() {
@@ -129,8 +164,6 @@ public class Main extends Application {
     }
 
 }
-
-
 
 ///////// Testing ByteUtils
 //        byte[] arr1 = new byte[4];
