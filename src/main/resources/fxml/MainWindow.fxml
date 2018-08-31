@@ -8,10 +8,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import org.fxmisc.richtext.InlineCssTextArea?>
 
-<AnchorPane id="AnchorPane" prefHeight="582.0" prefWidth="762.0" styleClass="mainFxmlClass" stylesheets="@../styles/mainwindow.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="648.0" prefWidth="762.0" styleClass="mainFxmlClass" stylesheets="@../styles/mainwindow.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-      <JFXTextField fx:id="ChoosedFile" editable="false" labelFloat="true" layoutX="14.0" layoutY="22.0" prefHeight="15.0" prefWidth="315.0" promptText="Choose file to upload" style="-fx-font-size: 12px;" />
-      <JFXButton fx:id="ChooseUploadBtn" layoutX="349.0" layoutY="21.0" text="Choose" />
       <Pane layoutX="530.0" layoutY="14.0" prefHeight="79.0" prefWidth="225.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
          <children>
             <Label layoutX="19.0" layoutY="14.0" text="ID:" textFill="WHITE" />
@@ -20,30 +18,47 @@
             <Label fx:id="EmailTxt" layoutX="65.0" layoutY="42.0" textFill="WHITE" />
          </children>
       </Pane>
-      <JFXListView fx:id="ListFiles" layoutX="529.0" layoutY="107.0" prefHeight="244.0" prefWidth="225.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm;" />
-      <JFXButton fx:id="ListFilesBtn" layoutX="677.0" layoutY="361.0" onAction="#ChooseDirectory" text="List Files" />
-      <JFXButton fx:id="ClearBtn" layoutX="549.0" layoutY="361.0" onAction="#ClearList" prefHeight="27.0" prefWidth="63.0" text="Clear" />
-      <JFXButton fx:id="UploadBtn" layoutX="428.0" layoutY="21.0" onAction="#UploadFile" text="Upload" />
-      <Label layoutX="14.0" layoutY="388.0" style="-fcx-font-style: bold;" text="Log" textFill="WHITE" />
-      <InlineCssTextArea fx:id="log" autoScrollOnDragDesired="false" editable="false" layoutX="7.0" layoutY="406.0" prefHeight="162.0" prefWidth="742.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm; -fx-text-fill: #fff;" stylesheets="@../styles/mainwindow.css" wrapText="true" />
-      <JFXTextField fx:id="AESKeyToEncryptTxt" editable="true" labelFloat="true" layoutX="13.0" layoutY="82.0" prefHeight="15.0" prefWidth="315.0" promptText="Please enter file name to get the encrypting AES key" style="-fx-font-size: 12px;" />
-      <!--<JFXButton fx:id="AESKeyToEncryptBtn" layoutX="349.0" layoutY="81.0" prefHeight="27.0" prefWidth="116.0" text="Choos AES Key" />-->
-      <JFXButton fx:id="PublicKeyToEncryptWithBtn" layoutX="349.0" layoutY="126.0" text="Choose Public Key" />
-      <JFXButton fx:id="EncryptBtn" layoutX="375.0" layoutY="90.0" text="Encrypt" />
-      <JFXTextField fx:id="PublicKeyToEncryptWithTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="127.0" prefHeight="15.0" prefWidth="315.0" promptText="Please Choose the Public Key to encrypt with " style="-fx-font-size: 12px;" />
-      <JFXTextField fx:id="EncryptedFileToBeDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="176.0" prefHeight="25.0" prefWidth="420.0" promptText="Please Choose the Encrypted File which will be decrypted with your private key" style="-fx-font-size: 12px;" />
-      <JFXButton fx:id="EncryptedFileToBeDecBtn" layoutX="456.0" layoutY="176.0" text="Choose" />
-      <JFXTextField fx:id="FileToDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="219.0" prefHeight="25.0" prefWidth="315.0" promptText="Please select the file you need from the list" style="-fx-font-size: 12px;" />
-      <JFXButton fx:id="DecryptBtn" layoutX="349.0" layoutY="218.0" text="Decrypt" />
-      <Pane layoutX="14.0" layoutY="278.0" prefHeight="97.0" prefWidth="420.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+      <JFXListView fx:id="ListFiles" layoutX="529.0" layoutY="107.0" prefHeight="314.0" prefWidth="225.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm;" />
+      <JFXButton fx:id="ListFilesBtn" layoutX="670.0" layoutY="438.0" onAction="#ChooseDirectory" text="List Files" />
+      <JFXButton fx:id="ClearBtn" layoutX="552.0" layoutY="438.0" onAction="#ClearList" prefHeight="27.0" prefWidth="63.0" text="Clear" />
+      <Label layoutX="14.0" layoutY="456.0" style="-fcx-font-style: bold;" text="Log" textFill="#0ccd16" />
+      <InlineCssTextArea fx:id="log" autoScrollOnDragDesired="false" editable="false" layoutX="7.0" layoutY="478.0" prefHeight="162.0" prefWidth="742.0" style="-fx-background-color: #2e2f30; -fx-border-color: #fff; -fx-border-radius: 0.2cm; -fx-text-fill: #fff;" stylesheets="@../styles/mainwindow.css" wrapText="true" />
+      <Pane layoutX="8.0" layoutY="358.0" prefHeight="97.0" prefWidth="508.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
          <children>
             <Label layoutX="15.0" layoutY="37.0" text="Owner ID:" textFill="WHITE" />
             <Label layoutX="14.0" layoutY="65.0" text="Owner Email:" textFill="WHITE" />
-            <Label layoutX="13.0" layoutY="15.0" text="Selected File Details" textFill="WHITE" />
+            <Label layoutX="14.0" layoutY="7.0" text="Selected File Details" textFill="#0ccd16" />
             <Label fx:id="OwnerIDLbl" layoutX="79.0" layoutY="37.0" prefHeight="17.0" prefWidth="200.0" textFill="WHITE" />
             <Label fx:id="OwnerEmailLbl" layoutX="97.0" layoutY="65.0" prefHeight="17.0" prefWidth="200.0" textFill="WHITE" />
-            <Label layoutX="178.0" layoutY="15.0" text="Size:" textFill="WHITE" />
+            <Label layoutX="185.0" layoutY="7.0" text="Size:" textFill="WHITE" />
             <Label fx:id="SizeLbl" layoutX="217.0" layoutY="15.0" prefHeight="17.0" prefWidth="200.0" textFill="WHITE" />
+         </children>
+      </Pane>
+      <Pane layoutX="8.0" layoutY="110.0" prefHeight="116.0" prefWidth="508.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm; -fx-border-style: border;">
+         <children>
+            <Label layoutX="14.0" layoutY="6.0" text="AES Encryption which will be send to user " textFill="#0ccd16" />
+            <JFXTextField fx:id="AESKeyToEncryptTxt" editable="true" labelFloat="true" layoutX="14.0" layoutY="76.0" prefHeight="15.0" prefWidth="315.0" promptText="Please enter file name to get the encrypting AES key" style="-fx-font-size: 12px;" />
+            <!--<JFXButton fx:id="AESKeyToEncryptBtn" layoutX="349.0" layoutY="81.0" prefHeight="27.0" prefWidth="116.0" text="Choos AES Key" />-->
+            <JFXButton fx:id="PublicKeyToEncryptWithBtn" layoutX="338.0" layoutY="33.0" text="Choose Public Key" />
+            <JFXButton fx:id="EncryptBtn" layoutX="367.0" layoutY="75.0" text="Encrypt" />
+            <JFXTextField fx:id="PublicKeyToEncryptWithTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="34.0" prefHeight="15.0" prefWidth="315.0" promptText="Please Choose the Public Key to encrypt with " style="-fx-font-size: 12px;" />
+         </children>
+      </Pane>
+      <Pane layoutX="8.0" layoutY="234.0" prefHeight="116.0" prefWidth="508.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+         <children>
+            <JFXTextField fx:id="EncryptedFileToBeDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="34.0" prefHeight="25.0" prefWidth="420.0" promptText="Please Choose the Encrypted AES Key File Which you received from the owner" style="-fx-font-size: 12px;" />
+            <JFXButton fx:id="EncryptedFileToBeDecBtn" layoutX="444.0" layoutY="33.0" text="Choose" />
+            <JFXTextField fx:id="FileToDecTxt" editable="false" labelFloat="true" layoutX="14.0" layoutY="72.0" prefHeight="25.0" prefWidth="315.0" promptText="Please select the file you need from the list" style="-fx-font-size: 12px;" />
+            <JFXButton fx:id="DecryptBtn" layoutX="351.0" layoutY="71.0" text="Decrypt" />
+            <Label layoutX="14.0" layoutY="6.0" text="Decryption" textFill="#0ccd16" />
+         </children>
+      </Pane>
+      <Pane layoutX="7.0" layoutY="14.0" prefHeight="88.0" prefWidth="508.0" style="-fx-border-color: #fff; -fx-border-radius: 0.2cm;">
+         <children>
+            <JFXTextField fx:id="ChoosedFile" editable="false" labelFloat="true" layoutX="14.0" layoutY="42.0" prefHeight="15.0" prefWidth="315.0" promptText="Choose file to upload" style="-fx-font-size: 12px;" />
+            <JFXButton fx:id="ChooseUploadBtn" layoutX="352.0" layoutY="41.0" text="Choose" />
+            <JFXButton fx:id="UploadBtn" layoutX="430.0" layoutY="41.0" onAction="#UploadFile" text="Upload" />
+            <Label layoutX="14.0" layoutY="6.0" text="File Upload and Encryption" textFill="#0ccd16" />
          </children>
       </Pane>
    </children>
