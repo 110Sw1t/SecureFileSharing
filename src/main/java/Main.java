@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
@@ -60,8 +61,15 @@ public class Main extends Application {
 //    }
     @Override
     public void start(Stage primaryStage) throws Exception {
-        DriveHandle handle = DriveHandle.getDriveHandle();
+//        DriveHandle handle = DriveHandle.getDriveHandle();
 
+//        RandomString rs = new RandomString(16);
+//        AdvancedEncryptionStandard aes = new AdvancedEncryptionStandard(rs.nextString().getBytes(StandardCharsets.UTF_8));
+//        byte[] C = aes.encrypt(Files.readAllBytes(new File("C:\\Users\\fadia\\Desktop\\8.pdf").toPath()));
+//        FileOutputStream fos = new FileOutputStream("C:\\Users\\fadia\\Desktop\\toto.pdf",false);
+//        fos.write(aes.decrypt(C));
+//        fos.flush();
+//        fos.close();
 //        KeyGenerator key = KeyGenerator.getInstance("AES");
 //        key.init(128);
 //        SecretKey finalKey = key.generateKey();
@@ -95,7 +103,6 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getClassLoader().getResource("fxml\\MainWindow.fxml"));
         MainWindowController controller = new MainWindowController();
-        controller.setDriveHandle(handle);
         loader.setController(controller);
         root = loader.load();
         Stage stage = new Stage();
@@ -112,6 +119,9 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.setOnCloseRequest(e -> closeWindow());
         stage.show();
+
+//       RandomString rs = new RandomString
+//        closeWindow();
     }
 
     private void closeWindow() {
@@ -119,3 +129,34 @@ public class Main extends Application {
     }
 
 }
+
+
+
+///////// Testing ByteUtils
+//        byte[] arr1 = new byte[4];
+//        byte[] arr2 = new byte[8];
+//        for (byte i = 0; i < arr1.length; i++) {
+//            arr1[i] = i;
+//        }
+//        for (byte i = 0; i < arr2.length; i++) {
+//            arr2[i] = i;
+//        }
+//        byte[] combined = ByteUtils.byteArrayMerge(arr2, arr1);
+//        for (byte i = 0; i < combined.length; i++) {
+//            System.out.println(combined[i]);
+//        }
+//        System.out.println("\n\n\n");
+//        byte[][]split = ByteUtils.byteArraySplit(combined, 7);
+//        for (byte i = 0; i < split[0].length; i++) {
+//            System.out.println(split[0][i]);
+//        }
+//        System.out.println("\n\n\n");
+//        for (byte i = 0; i < split[1].length; i++) {
+//            System.out.println(split[1][i]);
+//        }
+//        System.out.println("\n\n\n");
+//        int x = 0x1F1F;
+//        byte[] arr = ByteUtils.intToBytes(x);
+//        x = ByteUtils.bytesToInt(arr);
+//        System.out.println("x = " + x);
+//        closeWindow();
